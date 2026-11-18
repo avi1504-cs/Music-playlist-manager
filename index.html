@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive Music Playlist Manager Web Application featuring real-time Data Structure Visualizers (Doubly Linked List, Stack, Queue, BST, Hash Map) and Web Audio Player.">
+    <title>Music Playlist Manager | DSA & OOP Web Application</title>
+    
+    <!-- Modern Typography (Outfit & Inter from Google Fonts) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-compact-disc spin"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>PlaylistManager</h1>
+                    <span class="badge">DSA C++ Engine</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section-title">LIBRARY</div>
+                <a href="#" class="nav-item active" data-tab="playlist">
+                    <i class="fa-solid fa-list-ul"></i> All Songs
+                </a>
+                <a href="#" class="nav-item" data-tab="favorites">
+                    <i class="fa-solid fa-heart"></i> Favorites
+                </a>
+                <a href="#" class="nav-item" data-tab="recently-played">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Recently Played
+                </a>
+
+                <div class="nav-section-title">DSA VISUALIZERS</div>
+                <a href="#" class="nav-item" data-tab="vis-dll">
+                    <i class="fa-solid fa-link"></i> Doubly Linked List
+                </a>
+                <a href="#" class="nav-item" data-tab="vis-stack">
+                    <i class="fa-solid fa-layer-group"></i> Undo Stack (LIFO)
+                </a>
+                <a href="#" class="nav-item" data-tab="vis-queue">
+                    <i class="fa-solid fa-bars-staggered"></i> History Queue (FIFO)
+                </a>
+                <a href="#" class="nav-item" data-tab="vis-bst">
+                    <i class="fa-solid fa-diagram-project"></i> Binary Search Tree
+                </a>
+                <a href="#" class="nav-item" data-tab="vis-hash">
+                    <i class="fa-solid fa-bolt"></i> Hash Map Lookup
+                </a>
+
+                <div class="nav-section-title">ANALYTICS</div>
+                <a href="#" class="nav-item" data-tab="reports">
+                    <i class="fa-solid fa-chart-pie"></i> Reports & Analytics
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="undo-widget">
+                    <div class="undo-info">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span id="undo-count-label">Stack: 0 actions</span>
+                    </div>
+                    <button id="btn-quick-undo" class="btn-undo-action" title="Undo Last Operation">
+                        <i class="fa-solid fa-undo"></i> Undo
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Bar -->
+            <header class="top-header">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="search-input" placeholder="Search by ID, Title, Artist, Album, Genre...">
+                    <span class="hash-tag" title="Indexed via O(1) Hash Map"><i class="fa-solid fa-bolt"></i> O(1) Hash Map</span>
+                </div>
+
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="btn-shuffle">
+                        <i class="fa-solid fa-shuffle"></i> Shuffle
+                    </button>
+                    <button class="btn btn-secondary" id="btn-reverse">
+                        <i class="fa-solid fa-right-left"></i> Reverse
+                    </button>
+                    <button class="btn btn-primary" id="btn-quick-import" style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);">
+                        <i class="fa-solid fa-folder-open"></i> Choose from File Manager
+                    </button>
+                    <input type="file" id="direct-audio-input" accept="audio/*" style="display: none;">
+                    <button class="btn btn-primary" id="btn-open-add-modal">
+                        <i class="fa-solid fa-plus"></i> Add Song
+                    </button>
+                </div>
+            </header>
+
+            <!-- Tab View 1: Main Playlist Grid / Table -->
+            <section id="tab-playlist" class="tab-page active">
+                <div class="section-header">
+                    <h2>Master Playlist</h2>
+                    <div class="sort-controls">
+                        <label><i class="fa-solid fa-arrow-down-short-wide"></i> Sort By (BST):</label>
+                        <select id="sort-select">
+                            <option value="ID">Default (Song ID)</option>
+                            <option value="TITLE">Title (A-Z)</option>
+                            <option value="ARTIST">Artist (A-Z)</option>
+                            <option value="RATING">Rating (High to Low)</option>
+                            <option value="DURATION">Duration (Short to Long)</option>
+                            <option value="YEAR">Release Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="playlist-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Artist</th>
+                                <th>Album</th>
+                                <th>Genre</th>
+                                <th>Duration</th>
+                                <th>Year</th>
+                                <th>Rating</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="playlist-tbody">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Tab View 2: Favorites -->
+            <section id="tab-favorites" class="tab-page">
+                <div class="section-header">
+                    <h2>Favorite Tracks ❤️</h2>
+                </div>
+                <div class="table-container">
+                    <table class="playlist-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Artist</th>
+                                <th>Album</th>
+                                <th>Genre</th>
+                                <th>Duration</th>
+                                <th>Rating</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="favorites-tbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Tab View 3: Recently Played Queue -->
+            <section id="tab-recently-played" class="tab-page">
+                <div class="section-header">
+                    <h2>Recently Played Queue (FIFO History) ⏳</h2>
+                    <span class="info-badge">Max Buffer Capacity: 10 Items</span>
+                </div>
+                <div class="table-container">
+                    <table class="playlist-table">
+                        <thead>
+                            <tr>
+                                <th>Queue Pos</th>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Artist</th>
+                                <th>Album</th>
+                                <th>Duration</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recently-played-tbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Tab View 4: Doubly Linked List Visualizer -->
+            <section id="tab-vis-dll" class="tab-page">
+                <div class="section-header">
+                    <h2>Doubly Linked List Visual Inspector 🔗</h2>
+                    <p class="section-desc">Interactive node pointers showing bidirectional <code>prev ⇄ next</code> connections in memory.</p>
+                </div>
+                <div class="visualizer-container">
+                    <div id="dll-nodes-canvas" class="dll-canvas">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab View 5: Undo Stack Inspector -->
+            <section id="tab-vis-stack" class="tab-page">
+                <div class="section-header">
+                    <h2>Undo Stack Inspector (LIFO) 📚</h2>
+                    <p class="section-desc">Last-In-First-Out stack frames capturing deleted songs and previous attribute states.</p>
+                </div>
+                <div class="visualizer-container">
+                    <div id="stack-frames-container" class="stack-canvas">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab View 6: History Queue Inspector -->
+            <section id="tab-vis-queue" class="tab-page">
+                <div class="section-header">
+                    <h2>History Queue Inspector (FIFO) ⏳</h2>
+                    <p class="section-desc">First-In-First-Out buffer slots keeping recent track history.</p>
+                </div>
+                <div class="visualizer-container">
+                    <div id="queue-slots-container" class="queue-canvas">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab View 7: BST Visualizer -->
+            <section id="tab-vis-bst" class="tab-page">
+                <div class="section-header">
+                    <h2>Binary Search Tree Visualizer 🌲</h2>
+                    <p class="section-desc">Hierarchical BST tree organizing playlist elements for $O(N \log N)$ sorting.</p>
+                </div>
+                <div class="visualizer-container">
+                    <div id="bst-tree-container" class="bst-canvas">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab View 8: Hash Map Lookup -->
+            <section id="tab-vis-hash" class="tab-page">
+                <div class="section-header">
+                    <h2>Hash Map Bucket Inspector ⚡</h2>
+                    <p class="section-desc">Direct $O(1)$ key-value mapping from <code>Song ID ➔ DoublyLinkedList Node*</code> address.</p>
+                </div>
+                <div class="visualizer-container">
+                    <div id="hash-map-container" class="hash-canvas">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab View 9: Reports & Analytics -->
+            <section id="tab-reports" class="tab-page">
+                <div class="section-header">
+                    <h2>Analytics & Statistics 📊</h2>
+                </div>
+                <div class="analytics-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-music"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-total-songs">0</span>
+                            <span class="stat-label">Total Songs</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-stopwatch"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-total-dur">00:00</span>
+                            <span class="stat-label">Total Duration</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-avg-rating">0.0</span>
+                            <span class="stat-label">Average Rating</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-heart"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-favorites-count">0</span>
+                            <span class="stat-label">Favorite Tracks</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="records-container">
+                    <div class="record-card">
+                        <h3>🎵 Longest Song</h3>
+                        <div id="record-longest-song" class="record-body">N/A</div>
+                    </div>
+                    <div class="record-card">
+                        <h3>⚡ Shortest Song</h3>
+                        <div id="record-shortest-song" class="record-body">N/A</div>
+                    </div>
+                    <div class="record-card">
+                        <h3>⭐ Highest Rated</h3>
+                        <div id="record-highest-rated" class="record-body">N/A</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Fixed Audio Player Bar at Bottom -->
+    <footer class="player-bar">
+        <div class="player-left">
+            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e293b'/><circle cx='50' cy='50' r='35' fill='%230f172a' stroke='%238b5cf6' stroke-width='4'/><circle cx='50' cy='50' r='12' fill='%23ec4899'/></svg>" alt="Cover" id="player-cover" class="player-album-art">
+            <div class="player-track-info">
+                <span class="player-title" id="player-title">No Track Selected</span>
+                <span class="player-artist" id="player-artist">Select a song to start playing</span>
+            </div>
+            <button class="btn-icon" id="btn-player-fav" title="Mark Favorite"><i class="fa-regular fa-heart"></i></button>
+        </div>
+
+        <div class="player-center">
+            <div class="player-controls">
+                <button class="btn-icon" id="btn-player-shuffle" title="Shuffle"><i class="fa-solid fa-shuffle"></i></button>
+                <button class="btn-icon" id="btn-player-prev" title="Previous Song (DLL prev)"><i class="fa-solid fa-backward-step"></i></button>
+                <button class="btn-play-pause" id="btn-player-toggle" title="Play/Pause"><i class="fa-solid fa-play"></i></button>
+                <button class="btn-icon" id="btn-player-next" title="Next Song (DLL next)"><i class="fa-solid fa-forward-step"></i></button>
+                <button class="btn-icon" id="btn-player-reverse" title="Reverse Playlist"><i class="fa-solid fa-right-left"></i></button>
+            </div>
+            <div class="player-progress-container">
+                <span id="player-current-time">00:00</span>
+                <input type="range" id="player-seek-bar" value="0" min="0" max="100" class="seek-bar">
+                <span id="player-total-time">00:00</span>
+            </div>
+        </div>
+
+        <div class="player-right">
+            <i class="fa-solid fa-volume-high" id="volume-icon"></i>
+            <input type="range" id="volume-bar" value="80" min="0" max="100" class="volume-bar">
+        </div>
+    </footer>
+
+    <!-- Add/Edit Song Modal -->
+    <div id="song-modal" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modal-title">Add New Song</h3>
+                <button id="btn-close-modal" class="btn-close">&times;</button>
+            </div>
+            <form id="song-form" class="modal-body">
+                <input type="hidden" id="form-song-id">
+                <div class="form-group">
+                    <label>Title *</label>
+                    <input type="text" id="form-title" required placeholder="e.g. Blinding Lights">
+                </div>
+                <div class="form-group">
+                    <label>Artist *</label>
+                    <input type="text" id="form-artist" required placeholder="e.g. The Weeknd">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Album</label>
+                        <input type="text" id="form-album" placeholder="e.g. After Hours">
+                    </div>
+                    <div class="form-group">
+                        <label>Genre</label>
+                        <input type="text" id="form-genre" placeholder="e.g. Synthwave">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label style="color: var(--accent-secondary); font-weight: 600;">🎵 Select MP3 Audio File from Computer</label>
+                    <input type="file" id="form-audio-file" accept="audio/*">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Duration (Seconds) *</label>
+                        <input type="number" id="form-duration" required min="1" placeholder="200">
+                    </div>
+                    <div class="form-group">
+                        <label>Release Year</label>
+                        <input type="number" id="form-year" min="1900" max="2030" placeholder="2019">
+                    </div>
+                    <div class="form-group">
+                        <label>Rating (1.0 - 5.0)</label>
+                        <input type="number" id="form-rating" step="0.1" min="1.0" max="5.0" placeholder="4.9">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Song</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

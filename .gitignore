@@ -1,0 +1,14 @@
+# Compiled binaries
+*.exe
+*.o
+*.obj
+out.txt
+
+# Node modules (live-server)
+node_modules/
+package-lock.json
+
+# Test output files
+test_out_songs.txt
+run_tests.exe
+PlaylistManagerApp.exe

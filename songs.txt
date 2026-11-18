@@ -1,0 +1,12 @@
+101|Blinding Lights|The Weeknd|After Hours|Synthwave|200|2019|4.9|1|default.mp3
+102|Shape of You|Ed Sheeran|Divide|Pop|233|2017|4.7|0|default.mp3
+103|Bohemian Rhapsody|Queen|A Night at the Opera|Rock|354|1975|5|1|default.mp3
+104|Hotel California|Eagles|Hotel California|Classic Rock|390|1976|4.9|1|default.mp3
+105|Stay|Kid LAROI & Justin Bieber|F*CK LOVE 3|Pop|141|2021|4.3|0|default.mp3
+106|Levitating|Dua Lipa|Future Nostalgia|Dance Pop|203|2020|4.6|0|default.mp3
+107|Sunflower|Post Malone & Swae Lee|Spider-Man|Hip-Hop|158|2018|4.8|1|default.mp3
+108|Someone Like You|Adele|21|Soul|285|2011|4.7|0|default.mp3
+109|Smells Like Teen Spirit|Nirvana|Nevermind|Grunge|301|1991|4.8|0|default.mp3
+110|Starboy|The Weeknd|Starboy|R&B|230|2016|4.7|1|default.mp3
+19|kljn|kjnk|kjbnkj|njkn|99|2011|4|0|default.mp3
+1111|tu meri|jashan|anjana|Pop|230|2025|5|1|C:\Users\bhyan\Downloads\Dhurandhar Song Baloch - Sagar Kadam X VDJ LOVE.mp3
